@@ -12,8 +12,11 @@ const Navbar = () => {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-20">
           <Link to="/" className="flex items-center gap-2">
-            <img src="/logo-b.svg" alt="Meowest" className="h-10 w-auto" />
-            <span className="text-white text-2xl font-bold">MEOWEST</span>
+            <img 
+              src="https://cdn.poehali.dev/files/30ce9e4d-e9cb-4b7f-89ed-fae60282d486.jpg" 
+              alt="Meowest" 
+              className="h-10 w-auto" 
+            />
           </Link>
 
           {/* Desktop Navigation */}

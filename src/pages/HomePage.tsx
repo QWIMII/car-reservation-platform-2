@@ -93,38 +93,6 @@ const HomePage = () => {
         </div>
       </section>
       
-      {/* About Section */}
-      <section className="py-20 bg-gray-900">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-            <div>
-              <h2 className="text-3xl md:text-4xl font-bold mb-6">Интересная история</h2>
-              <p className="text-gray-300 mb-6">
-                Компания Meowest начала свою деятельность в 2010 году с небольшой коллекции из трех премиальных автомобилей. Сегодня наш автопарк насчитывает более 30 элитных машин, каждая из которых тщательно подобрана для ценителей роскоши и высоких технологий.
-              </p>
-              <p className="text-gray-300 mb-8">
-                Наша миссия — предоставить клиентам возможность почувствовать непревзойденный комфорт вождения автомобилей мирового класса, сопровождаемый безупречным сервисом и индивидуальным подходом к каждому.
-              </p>
-              <Button 
-                asChild
-                variant="default"
-              >
-                <Link to="/about">
-                  Узнать больше
-                </Link>
-              </Button>
-            </div>
-            <div className="relative h-[400px] rounded-lg overflow-hidden">
-              <img 
-                src="https://images.unsplash.com/photo-1619572945514-80de52e2fc40?q=80&w=1964&auto=format&fit=crop" 
-                alt="Автомобиль в салоне" 
-                className="absolute inset-0 w-full h-full object-cover"
-              />
-            </div>
-          </div>
-        </div>
-      </section>
-      
       {/* Call to Action */}
       <section className="py-20 bg-black relative overflow-hidden">
         <div 

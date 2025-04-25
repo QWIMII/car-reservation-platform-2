@@ -1,13 +1,4 @@
 
-export interface User {
-  id: string;
-  name: string;
-  email: string;
-  password: string;
-  phone: string;
-  licenseNumber: string;
-}
-
 export interface Car {
   id: string;
   brand: string;
@@ -25,6 +16,15 @@ export interface Car {
     topSpeed: string;
   };
   available: boolean;
+}
+
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  password: string;
+  phone: string;
+  licenseNumber: string;
 }
 
 export interface Reservation {
