@@ -1,647 +1,656 @@
-import { Car, User, Reservation, Review } from '@/types';
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  reservations: string[];
+}
 
-// Пользователи
-export const users: User[] = [
-  {
-    id: 1,
-    name: 'Александр Иванов',
-    email: 'alex@example.com',
-    phone: '+7 (999) 123-45-67',
-    password: 'password123', // В реальном приложении пароли должны быть хешированы
-    avatar: 'https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=2080&auto=format&fit=crop',
-    role: 'client',
-    createdAt: '2023-01-15T10:30:00Z'
-  },
-  {
-    id: 2,
-    name: 'Мария Петрова',
-    email: 'maria@example.com',
-    phone: '+7 (999) 987-65-43',
-    password: 'securepass',
-    avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=2187&auto=format&fit=crop',
-    role: 'client',
-    createdAt: '2023-02-20T14:15:00Z'
-  },
-  {
-    id: 3,
-    name: 'Дмитрий Смирнов',
-    email: 'dmitry@example.com',
-    phone: '+7 (999) 456-78-90',
-    password: 'adminpass',
-    avatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=2187&auto=format&fit=crop',
-    role: 'admin',
-    createdAt: '2022-12-10T09:00:00Z'
-  }
-];
+export interface Car {
+  id: string;
+  name: string;
+  brand: string;
+  model: string;
+  year: number;
+  category: 'porsche' | 'luxury' | 'business';
+  price: number;
+  image: string;
+  description: string;
+  specs: {
+    engine: string;
+    power: string;
+    acceleration: string;
+    maxSpeed: string;
+  };
+  modelUrl: string;
+}
 
-// Автомобили
-export const cars: Car[] = [
-  // Porsche - 5 автомобилей
+export interface Reservation {
+  id: string;
+  userId: string;
+  carId: string;
+  startDate: string;
+  endDate: string;
+  status: 'pending' | 'confirmed' | 'cancelled' | 'completed';
+  totalPrice: number;
+  createdAt: string;
+}
+
+export interface Review {
+  id: string;
+  userId: string;
+  carId: string;
+  rating: number;
+  text: string;
+  date: string;
+}
+
+// Демо-пользователь
+const currentUser: User = {
+  id: 'user1',
+  name: 'Иван Петров',
+  email: 'ivan@example.com',
+  phone: '+7 (909) 123-45-67',
+  reservations: ['res1', 'res2']
+};
+
+// Каталог автомобилей
+const cars: Car[] = [
+  // Porsche (5)
   {
-    id: 1,
+    id: 'car1',
     name: 'Porsche 911 Carrera',
+    brand: 'Porsche',
+    model: '911 Carrera',
+    year: 2023,
     category: 'porsche',
     price: 25000,
-    priceUnit: 'день',
-    year: 2023,
-    description: 'Культовый спортивный автомобиль Porsche 911 Carrera с непревзойденной динамикой и управляемостью.',
-    image: 'https://images.unsplash.com/photo-1614162692292-7ac56d7f371e?q=80&w=2070&auto=format&fit=crop',
-    modelUrl: 'https://sketchfab.com/3d-models/porsche-911-carrera-4s-88737673097c49c6a01e00dd6d4a3794',
-    color: 'Красный',
-    transmission: 'Автомат',
-    engine: '3.0L Twin-Turbo Flat-6, 385 л.с.',
-    consumption: '9.0 л/100 км',
-    features: ['Спортивный выхлоп', 'Адаптивная подвеска', 'Кожаный салон'],
-    available: true
+    image: '/images/porsche-911.jpg',
+    description: 'Легендарный спортивный автомобиль с непревзойденной управляемостью и стилем.',
+    specs: {
+      engine: '3.0L Twin-Turbo Flat-6',
+      power: '379 л.с.',
+      acceleration: '4.2 сек до 100 км/ч',
+      maxSpeed: '293 км/ч'
+    },
+    modelUrl: 'https://sketchfab.com/3d-models/porsche-911-c4s-9552e3bf3661473a8f6e0b6f0b0ef28d'
   },
   {
-    id: 2,
-    name: 'Porsche Taycan Turbo S',
-    category: 'porsche',
-    price: 30000,
-    priceUnit: 'день',
+    id: 'car2',
+    name: 'Porsche Taycan',
+    brand: 'Porsche',
+    model: 'Taycan Turbo S',
     year: 2023,
-    description: 'Электрический спорткар Porsche с ошеломляющей производительностью и запасом хода.',
-    image: 'https://images.unsplash.com/photo-1619525515567-a72ef1258eb2?q=80&w=2070&auto=format&fit=crop',
-    modelUrl: 'https://sketchfab.com/3d-models/porsche-taycan-turbo-s-2020-10a23f9c5e1c422e9acb30239ed6d71c',
-    color: 'Белый',
-    transmission: 'Автомат',
-    engine: 'Электрический, 761 л.с.',
-    consumption: '28.5 кВтч/100 км',
-    features: ['Разгон 0-100 км/ч за 2.8 сек.', '800-вольтовая архитектура', 'Панорамная крыша'],
-    available: true
-  },
-  {
-    id: 3,
-    name: 'Porsche Cayenne Turbo GT',
     category: 'porsche',
     price: 28000,
-    priceUnit: 'день',
-    year: 2022,
-    description: 'Спортивный кроссовер с мощным двигателем и динамикой суперкара.',
-    image: 'https://images.unsplash.com/photo-1580414057403-c5f451f30e1c?q=80&w=2087&auto=format&fit=crop',
-    modelUrl: 'https://sketchfab.com/3d-models/porsche-cayenne-turbo-2019-1e6f0a7c8b574e5ba50e66773a1613d1',
-    color: 'Черный',
-    transmission: 'Автомат',
-    engine: '4.0L Twin-Turbo V8, 640 л.с.',
-    consumption: '14.1 л/100 км',
-    features: ['Карбон-керамические тормоза', 'Спорт-пакет', '22-дюймовые диски'],
-    available: true
+    image: '/images/porsche-taycan.jpg',
+    description: 'Электрический спортивный автомобиль, сочетающий экологичность и производительность.',
+    specs: {
+      engine: 'Электродвигатель',
+      power: '750 л.с.',
+      acceleration: '2.8 сек до 100 км/ч',
+      maxSpeed: '260 км/ч'
+    },
+    modelUrl: 'https://sketchfab.com/3d-models/porsche-taycan-turbo-s-2020-game-ready-7814df9fbe124c28975da368856c22f8'
   },
   {
-    id: 4,
-    name: 'Porsche 718 Cayman GT4 RS',
+    id: 'car3',
+    name: 'Porsche Panamera',
+    brand: 'Porsche',
+    model: 'Panamera Turbo S',
+    year: 2023,
     category: 'porsche',
-    price: 26000,
-    priceUnit: 'день',
-    year: 2022,
-    description: 'Самый мощный и экстремальный представитель семейства 718 Cayman.',
-    image: 'https://images.unsplash.com/photo-1630990419761-8c1bd1e71709?q=80&w=2073&auto=format&fit=crop',
-    modelUrl: 'https://sketchfab.com/3d-models/porsche-cayman-gt4-2020-2c0efb48d0044a22ba83fbcd83ad2f1d',
-    color: 'Желтый',
-    transmission: 'Механика',
-    engine: '4.0L Flat-6, 500 л.с.',
-    consumption: '12.3 л/100 км',
-    features: ['Среднемоторная компоновка', 'Аэродинамический обвес', 'Облегченная конструкция'],
-    available: true
+    price: 30000,
+    image: '/images/porsche-panamera.jpg',
+    description: 'Роскошный спортивный седан с динамикой суперкара и комфортом премиум-класса.',
+    specs: {
+      engine: '4.0L V8 Twin-Turbo',
+      power: '620 л.с.',
+      acceleration: '3.1 сек до 100 км/ч',
+      maxSpeed: '315 км/ч'
+    },
+    modelUrl: 'https://sketchfab.com/3d-models/porsche-panamera-turbo-2017-lowpoly-f7f03d32fb064e3382c22a261a0e7b72'
   },
   {
-    id: 5,
-    name: 'Porsche Panamera Turbo S E-Hybrid',
+    id: 'car4',
+    name: 'Porsche Macan',
+    brand: 'Porsche',
+    model: 'Macan GTS',
+    year: 2023,
+    category: 'porsche',
+    price: 21000,
+    image: '/images/porsche-macan.jpg',
+    description: 'Компактный SUV с характеристиками спортивного автомобиля и практичностью кроссовера.',
+    specs: {
+      engine: '2.9L V6 Twin-Turbo',
+      power: '440 л.с.',
+      acceleration: '4.3 сек до 100 км/ч',
+      maxSpeed: '272 км/ч'
+    },
+    modelUrl: 'https://sketchfab.com/3d-models/porsche-macan-2014-lowpoly-df28682fa6424e5ab1d0116fc44d53c6'
+  },
+  {
+    id: 'car5',
+    name: 'Porsche Cayenne',
+    brand: 'Porsche',
+    model: 'Cayenne Turbo GT',
+    year: 2023,
     category: 'porsche',
     price: 27000,
-    priceUnit: 'день',
-    year: 2023,
-    description: 'Гибридный спортивный седан с роскошным интерьером и выдающейся производительностью.',
-    image: 'https://images.unsplash.com/photo-1611651336487-9983485d2c95?q=80&w=2082&auto=format&fit=crop',
-    modelUrl: 'https://sketchfab.com/3d-models/porsche-panamera-turbo-2017-49d3b8b5bc9e48009adc9cb7bd60cc8a',
-    color: 'Серый металлик',
-    transmission: 'Автомат',
-    engine: '4.0L Twin-Turbo V8 + электромотор, 700 л.с.',
-    consumption: '2.9 л/100 км (комбинированный)',
-    features: ['Гибридная силовая установка', 'Полный привод', 'Четырехзонный климат-контроль'],
-    available: true
+    image: '/images/porsche-cayenne.jpg',
+    description: 'Спортивный внедорожник с выдающейся динамикой и премиальным комфортом.',
+    specs: {
+      engine: '4.0L V8 Twin-Turbo',
+      power: '640 л.с.',
+      acceleration: '3.3 сек до 100 км/ч',
+      maxSpeed: '300 км/ч'
+    },
+    modelUrl: 'https://sketchfab.com/3d-models/2018-porsche-cayenne-turbo-1d3dfc81d26c4486a0a6f7dbdc1646e8'
   },
 
-  // Luxury - 10 автомобилей
+  // Luxury Cars (10)
   {
-    id: 6,
-    name: 'Rolls-Royce Phantom',
-    category: 'luxury',
-    price: 45000,
-    priceUnit: 'день',
+    id: 'car6',
+    name: 'Lamborghini Huracán',
+    brand: 'Lamborghini',
+    model: 'Huracán EVO',
     year: 2023,
-    description: 'Эталон роскоши и комфорта - Rolls-Royce Phantom VIII с индивидуальной отделкой салона.',
-    image: 'https://images.unsplash.com/photo-1631295868223-63265b40d9e4?q=80&w=2071&auto=format&fit=crop',
-    modelUrl: 'https://sketchfab.com/3d-models/2018-rolls-royce-phantom-a8d9c7a1c152473dbd1cb6fec39c77cb',
-    color: 'Темно-синий',
-    transmission: 'Автомат',
-    engine: '6.75L V12, 571 л.с.',
-    consumption: '14.5 л/100 км',
-    features: ['Звездное небо на потолке', 'Индивидуальные задние сиденья с массажем', 'Бар с холодильником'],
-    available: true
-  },
-  {
-    id: 7,
-    name: 'Bentley Continental GT Speed',
     category: 'luxury',
-    price: 35000,
-    priceUnit: 'день',
-    year: 2023,
-    description: 'Роскошное спортивное купе с непревзойденной отделкой и динамическими характеристиками.',
-    image: 'https://images.unsplash.com/photo-1621136560890-c34c20ab6b27?q=80&w=1974&auto=format&fit=crop',
-    modelUrl: 'https://sketchfab.com/3d-models/bentley-continental-gt-2018-9474566bde4e43b683ee1188bbfe0189',
-    color: 'Зеленый',
-    transmission: 'Автомат',
-    engine: '6.0L W12, 659 л.с.',
-    consumption: '14.8 л/100 км',
-    features: ['Полный привод', 'Карбон-керамические тормоза', 'Система ночного видения'],
-    available: true
+    price: 42000,
+    image: '/images/lamborghini-huracan.jpg',
+    description: 'Итальянский суперкар с захватывающим дизайном и невероятной мощностью.',
+    specs: {
+      engine: '5.2L V10',
+      power: '640 л.с.',
+      acceleration: '2.9 сек до 100 км/ч',
+      maxSpeed: '325 км/ч'
+    },
+    modelUrl: 'https://sketchfab.com/3d-models/lamborghini-huracan-lp-640-4-performante-0a5823cd10f84e55a5db4e679e315cac'
   },
   {
-    id: 8,
-    name: 'Mercedes-Maybach S680',
-    category: 'luxury',
-    price: 38000,
-    priceUnit: 'день',
-    year: 2023,
-    description: 'Представительский седан с максимальным комфортом для пассажиров.',
-    image: 'https://images.unsplash.com/photo-1617469767053-ca071b75d8b9?q=80&w=2070&auto=format&fit=crop',
-    modelUrl: 'https://sketchfab.com/3d-models/mercedes-maybach-s-class-2021-75fc761c36fd43d397b3164e0b69ca61',
-    color: 'Черный / Серебристый',
-    transmission: 'Автомат',
-    engine: '6.0L V12, 612 л.с.',
-    consumption: '14.2 л/100 км',
-    features: ['Удлиненная колесная база', 'Шумоизоляция премиум-класса', 'Отдельные VIP-кресла'],
-    available: true
-  },
-  {
-    id: 9,
-    name: 'Aston Martin DBS Superleggera',
-    category: 'luxury',
-    price: 34000,
-    priceUnit: 'день',
-    year: 2022,
-    description: 'Флагманский гран-турер с атлетичным дизайном и мощным двигателем V12.',
-    image: 'https://images.unsplash.com/photo-1592750573776-957bde9d9ca4?q=80&w=2069&auto=format&fit=crop',
-    modelUrl: 'https://sketchfab.com/3d-models/aston-martin-dbs-superleggera-2019-9b31f0be4d3c425baaeefe6f4414812e',
-    color: 'Красный',
-    transmission: 'Автомат',
-    engine: '5.2L Twin-Turbo V12, 725 л.с.',
-    consumption: '14.5 л/100 км',
-    features: ['Карбоновый кузов', 'Выхлопная система с активными клапанами', 'Кожаная отделка ручной работы'],
-    available: true
-  },
-  {
-    id: 10,
+    id: 'car7',
     name: 'Ferrari Roma',
+    brand: 'Ferrari',
+    model: 'Roma',
+    year: 2023,
     category: 'luxury',
-    price: 32000,
-    priceUnit: 'день',
-    year: 2022,
-    description: 'Элегантное купе с атмосферой La Dolce Vita и выдающимися динамическими характеристиками.',
-    image: 'https://images.unsplash.com/photo-1617527218775-77420206c2e9?q=80&w=2070&auto=format&fit=crop',
-    modelUrl: 'https://sketchfab.com/3d-models/ferrari-roma-d18c77e26363461484676c5e3cc6347a',
-    color: 'Голубой',
-    transmission: 'Автомат',
-    engine: '3.9L Twin-Turbo V8, 620 л.с.',
-    consumption: '11.6 л/100 км',
-    features: ['Запуск с кнопки на руле', 'Цифровая приборная панель', 'Адаптивная подвеска'],
-    available: true
+    price: 40000,
+    image: '/images/ferrari-roma.jpg',
+    description: 'Элегантное гран-туризмо с классическим итальянским стилем и современными технологиями.',
+    specs: {
+      engine: '3.9L V8 Twin-Turbo',
+      power: '620 л.с.',
+      acceleration: '3.4 сек до 100 км/ч',
+      maxSpeed: '320 км/ч'
+    },
+    modelUrl: 'https://sketchfab.com/3d-models/ferrari-roma-2020-6a61ca4acbc545a5b09a566667a7a71b'
   },
   {
-    id: 11,
-    name: 'Lamborghini Huracan STO',
-    category: 'luxury',
-    price: 38000,
-    priceUnit: 'день',
-    year: 2022,
-    description: 'Суперкар, вдохновленный мотоспортом, с экстремальной аэродинамикой и облегченной конструкцией.',
-    image: 'https://images.unsplash.com/photo-1614162692792-19b33322c61b?q=80&w=2070&auto=format&fit=crop',
-    modelUrl: 'https://sketchfab.com/3d-models/lamborghini-huracan-performante-4e2b858f5ef644e5b3338b1976b633e8',
-    color: 'Синий с оранжевым',
-    transmission: 'Автомат',
-    engine: '5.2L V10, 640 л.с.',
-    consumption: '14.9 л/100 км',
-    features: ['Карбоновый монокок', 'Магниторезологическая подвеска', 'Трековые шины'],
-    available: true
-  },
-  {
-    id: 12,
-    name: 'McLaren 720S',
+    id: 'car8',
+    name: 'Bentley Continental GT',
+    brand: 'Bentley',
+    model: 'Continental GT Speed',
+    year: 2023,
     category: 'luxury',
     price: 36000,
-    priceUnit: 'день',
-    year: 2022,
-    description: 'Технологичный суперкар с инновационной аэродинамикой и выдающимися характеристиками.',
-    image: 'https://images.unsplash.com/photo-1620891549027-942faa56aabc?q=80&w=1974&auto=format&fit=crop',
-    modelUrl: 'https://sketchfab.com/3d-models/mclaren-720s-2017-0a8a0d9d0b1d4e428fe5f11dfa01ac51',
-    color: 'Оранжевый',
-    transmission: 'Автомат',
-    engine: '4.0L Twin-Turbo V8, 720 л.с.',
-    consumption: '12.2 л/100 км',
-    features: ['Активная аэродинамика', 'Монокок из карбона', 'Складывающаяся приборная панель'],
-    available: true
+    image: '/images/bentley-continental.jpg',
+    description: 'Роскошный гран-туризмо, сочетающий традиционное британское качество и современную динамику.',
+    specs: {
+      engine: '6.0L W12 Twin-Turbo',
+      power: '650 л.с.',
+      acceleration: '3.5 сек до 100 км/ч',
+      maxSpeed: '335 км/ч'
+    },
+    modelUrl: 'https://sketchfab.com/3d-models/bentley-continental-gt-2018-cae0d6d56e5044dcb7bc1630aa8c1e73'
   },
   {
-    id: 13,
-    name: 'Bugatti Chiron',
-    category: 'luxury',
-    price: 60000,
-    priceUnit: 'день',
-    year: 2021,
-    description: 'Один из самых быстрых и эксклюзивных автомобилей в мире.',
-    image: 'https://images.unsplash.com/photo-1600712242805-5f78671b24da?q=80&w=1964&auto=format&fit=crop',
-    modelUrl: 'https://sketchfab.com/3d-models/bugatti-chiron-2020-e8c1abe552254d4e993d6293a93ce977',
-    color: 'Синий / Черный',
-    transmission: 'Автомат',
-    engine: '8.0L Quad-Turbo W16, 1500 л.с.',
-    consumption: '26.1 л/100 км',
-    features: ['Специальный ключ для режима Top Speed', 'Карбон-керамические тормоза', 'Телеметрия'],
-    available: false
-  },
-  {
-    id: 14,
-    name: 'Audi R8 V10 Performance',
-    category: 'luxury',
-    price: 30000,
-    priceUnit: 'день',
-    year: 2022,
-    description: 'Немецкий суперкар с повседневной практичностью и отточенной управляемостью.',
-    image: 'https://images.unsplash.com/photo-1603553329474-99f95f35394f?q=80&w=1974&auto=format&fit=crop',
-    modelUrl: 'https://sketchfab.com/3d-models/audi-r8-2019-free-a1c7f24e668a424fa5dd82ca1be7c0bd',
-    color: 'Серый',
-    transmission: 'Автомат',
-    engine: '5.2L V10, 620 л.с.',
-    consumption: '13.1 л/100 км',
-    features: ['Полный привод quattro', 'Лазерные фары', 'Виртуальная приборная панель'],
-    available: true
-  },
-  {
-    id: 15,
-    name: 'Maserati MC20',
-    category: 'luxury',
-    price: 31000,
-    priceUnit: 'день',
+    id: 'car9',
+    name: 'Rolls-Royce Ghost',
+    brand: 'Rolls-Royce',
+    model: 'Ghost',
     year: 2023,
-    description: 'Новейший суперкар от Maserati с уникальным двигателем собственной разработки.',
-    image: 'https://images.unsplash.com/photo-1617814065893-00757125efab?q=80&w=1964&auto=format&fit=crop',
-    modelUrl: 'https://sketchfab.com/3d-models/maserati-mc20-2021-17ea27cf47754eda9e10545b3af574be',
-    color: 'Белый',
-    transmission: 'Автомат',
-    engine: '3.0L Twin-Turbo V6, 630 л.с.',
-    consumption: '11.6 л/100 км',
-    features: ['Патентованная технология сгорания', 'Двери типа "бабочка"', 'Карбоновый монокок'],
-    available: true
+    category: 'luxury',
+    price: 45000,
+    image: '/images/rolls-royce-ghost.jpg',
+    description: 'Воплощение роскоши и комфорта в элегантном седане ручной сборки.',
+    specs: {
+      engine: '6.75L V12 Twin-Turbo',
+      power: '571 л.с.',
+      acceleration: '4.8 сек до 100 км/ч',
+      maxSpeed: '250 км/ч'
+    },
+    modelUrl: 'https://sketchfab.com/3d-models/rolls-royce-ghost-2021-full-interior-a4d4ae26c1fe47e28c9e10a4f77d6aa6'
+  },
+  {
+    id: 'car10',
+    name: 'Aston Martin DBS',
+    brand: 'Aston Martin',
+    model: 'DBS Superleggera',
+    year: 2023,
+    category: 'luxury',
+    price: 38000,
+    image: '/images/aston-martin-dbs.jpg',
+    description: 'Британский гран-туризмо с шикарным дизайном и выдающимися динамическими характеристиками.',
+    specs: {
+      engine: '5.2L V12 Twin-Turbo',
+      power: '725 л.с.',
+      acceleration: '3.4 сек до 100 км/ч',
+      maxSpeed: '340 км/ч'
+    },
+    modelUrl: 'https://sketchfab.com/3d-models/aston-martin-dbs-superleggera-c6a6449b4a5d493aa8d5ac5b76c1dafb'
+  },
+  {
+    id: 'car11',
+    name: 'McLaren 720S',
+    brand: 'McLaren',
+    model: '720S',
+    year: 2023,
+    category: 'luxury',
+    price: 43000,
+    image: '/images/mclaren-720s.jpg',
+    description: 'Инновационный суперкар с продвинутой аэродинамикой и передовыми технологиями.',
+    specs: {
+      engine: '4.0L V8 Twin-Turbo',
+      power: '720 л.с.',
+      acceleration: '2.9 сек до 100 км/ч',
+      maxSpeed: '341 км/ч'
+    },
+    modelUrl: 'https://sketchfab.com/3d-models/mclaren-720s-5a5d4733016e45a5bfc9eadac1b946ea'
+  },
+  {
+    id: 'car12',
+    name: 'Bugatti Chiron',
+    brand: 'Bugatti',
+    model: 'Chiron Super Sport',
+    year: 2023,
+    category: 'luxury',
+    price: 65000,
+    image: '/images/bugatti-chiron.jpg',
+    description: 'Один из самых быстрых и эксклюзивных гиперкаров в мире.',
+    specs: {
+      engine: '8.0L W16 Quad-Turbo',
+      power: '1600 л.с.',
+      acceleration: '2.4 сек до 100 км/ч',
+      maxSpeed: '440 км/ч'
+    },
+    modelUrl: 'https://sketchfab.com/3d-models/bugatti-chiron-2017-8ad468639f8f47c4a3f85ee41d640201'
+  },
+  {
+    id: 'car13',
+    name: 'Maserati MC20',
+    brand: 'Maserati',
+    model: 'MC20',
+    year: 2023,
+    category: 'luxury',
+    price: 32000,
+    image: '/images/maserati-mc20.jpg',
+    description: 'Итальянский суперкар с элегантным дизайном и инновационной силовой установкой.',
+    specs: {
+      engine: '3.0L V6 Twin-Turbo',
+      power: '630 л.с.',
+      acceleration: '2.9 сек до 100 км/ч',
+      maxSpeed: '325 км/ч'
+    },
+    modelUrl: 'https://sketchfab.com/3d-models/maserati-mc20-2021-5dd9bb5c3f08452dbec99c83fd3f5ab8'
+  },
+  {
+    id: 'car14',
+    name: 'Pagani Huayra',
+    brand: 'Pagani',
+    model: 'Huayra BC',
+    year: 2023,
+    category: 'luxury',
+    price: 70000,
+    image: '/images/pagani-huayra.jpg',
+    description: 'Эксклюзивный гиперкар ручной сборки с уникальным дизайном и исключительными характеристиками.',
+    specs: {
+      engine: '6.0L V12 Twin-Turbo',
+      power: '791 л.с.',
+      acceleration: '2.8 сек до 100 км/ч',
+      maxSpeed: '380 км/ч'
+    },
+    modelUrl: 'https://sketchfab.com/3d-models/pagani-huayra-ff21b4abf30c4baa943732321edf7e89'
+  },
+  {
+    id: 'car15',
+    name: 'Koenigsegg Jesko',
+    brand: 'Koenigsegg',
+    model: 'Jesko Absolut',
+    year: 2023,
+    category: 'luxury',
+    price: 75000,
+    image: '/images/koenigsegg-jesko.jpg',
+    description: 'Шведский гиперкар с рекордными показателями скорости и мощности.',
+    specs: {
+      engine: '5.0L V8 Twin-Turbo',
+      power: '1600 л.с.',
+      acceleration: '2.5 сек до 100 км/ч',
+      maxSpeed: '500+ км/ч'
+    },
+    modelUrl: 'https://sketchfab.com/3d-models/koenigsegg-jesko-absolut-5aa1eb0a8ddb45cc9700378586f26b8a'
   },
 
-  // Business - 15 автомобилей
+  // Business Cars (15)
   {
-    id: 16,
-    name: 'Mercedes-Benz S500',
-    category: 'business',
-    price: 20000,
-    priceUnit: 'день',
+    id: 'car16',
+    name: 'Mercedes S-Class',
+    brand: 'Mercedes-Benz',
+    model: 'S 580 4MATIC',
     year: 2023,
-    description: 'Флагманский седан Mercedes-Benz с инновационными технологиями и непревзойденным комфортом.',
-    image: 'https://images.unsplash.com/photo-1563720223523-7be2590d050f?q=80&w=1974&auto=format&fit=crop',
-    modelUrl: 'https://sketchfab.com/3d-models/mercedes-s-class-s580-2021-75fc761c36fd43d397b3164e0b69ca61',
-    color: 'Черный',
-    transmission: 'Автомат',
-    engine: '3.0L Inline-6 + EQ Boost, 435 л.с.',
-    consumption: '8.6 л/100 км',
-    features: ['3D-приборная панель', 'Пневмоподвеска', 'Система полуавтономного вождения'],
-    available: true
+    category: 'business',
+    price: 18000,
+    image: '/images/mercedes-s.jpg',
+    description: 'Флагманский седан Mercedes с непревзойденным комфортом и передовыми технологиями.',
+    specs: {
+      engine: '4.0L V8 Twin-Turbo',
+      power: '496 л.с.',
+      acceleration: '4.4 сек до 100 км/ч',
+      maxSpeed: '250 км/ч'
+    },
+    modelUrl: 'https://sketchfab.com/3d-models/mercedes-s-class-2021-9cb0a6c388c3409180fb2e3af2075aea'
   },
   {
-    id: 17,
+    id: 'car17',
     name: 'BMW 7 Series',
-    category: 'business',
-    price: 19000,
-    priceUnit: 'день',
+    brand: 'BMW',
+    model: '760i xDrive',
     year: 2023,
-    description: 'Седан представительского класса с технологиями будущего и комфортом премиум-уровня.',
-    image: 'https://images.unsplash.com/photo-1600705722075-2ea5ba2eabc3?q=80&w=2075&auto=format&fit=crop',
-    modelUrl: 'https://sketchfab.com/3d-models/bmw-7-series-2023-49d3b8b5bc9e48009adc9cb7bd60cc8a',
-    color: 'Серый металлик',
-    transmission: 'Автомат',
-    engine: '3.0L TwinPower Turbo, 380 л.с.',
-    consumption: '8.2 л/100 км',
-    features: ['Светящаяся решетка радиатора', 'Дисплей для задних пассажиров', 'Система автопарковки'],
-    available: true
+    category: 'business',
+    price: 17500,
+    image: '/images/bmw-7.jpg',
+    description: 'Представительский седан с инновационными технологиями и превосходной динамикой.',
+    specs: {
+      engine: '4.4L V8 Twin-Turbo',
+      power: '536 л.с.',
+      acceleration: '4.2 сек до 100 км/ч',
+      maxSpeed: '250 км/ч'
+    },
+    modelUrl: 'https://sketchfab.com/3d-models/bmw-7-series-2023-00cdc7a1f8d04ecaa96f14a74f81e303'
   },
   {
-    id: 18,
-    name: 'Audi A8 L',
-    category: 'business',
-    price: 18000,
-    priceUnit: 'день',
+    id: 'car18',
+    name: 'Audi A8',
+    brand: 'Audi',
+    model: 'A8 L 60 TFSI',
     year: 2023,
-    description: 'Удлинённый флагманский седан с интеллектуальной подвеской и цифровой экосистемой.',
-    image: 'https://images.unsplash.com/photo-1570739359647-fd87fada55c1?q=80&w=1974&auto=format&fit=crop',
-    modelUrl: 'https://sketchfab.com/3d-models/audi-a8-l-2018-a11b1271bd274081a423cdc12f9a57cd',
-    color: 'Темно-синий',
-    transmission: 'Автомат',
-    engine: '3.0L V6 TFSI, 340 л.с.',
-    consumption: '8.5 л/100 км',
-    features: ['Активная электромеханическая подвеска', 'Матричные OLED-фонари', 'Массаж стоп задних пассажиров'],
-    available: true
-  },
-  {
-    id: 19,
-    name: 'Lexus LS 500h',
     category: 'business',
-    price: 17000,
-    priceUnit: 'день',
-    year: 2022,
-    description: 'Гибридный флагман Lexus с традиционной японской эстетикой и передовыми технологиями.',
-    image: 'https://images.unsplash.com/photo-1621929747188-0b4dc28498d2?q=80&w=1972&auto=format&fit=crop',
-    modelUrl: 'https://sketchfab.com/3d-models/lexus-ls-500-2018-1ad307f554ca430f896628f488d0bffa',
-    color: 'Серебристый',
-    transmission: 'Автомат',
-    engine: '3.5L V6 + электромотор, 354 л.с.',
-    consumption: '6.6 л/100 км',
-    features: ['Сиденья с функцией шиацу-массажа', 'Аудиосистема Mark Levinson', 'Климат-концерт'],
-    available: true
+    price: 16500,
+    image: '/images/audi-a8.jpg',
+    description: 'Роскошный седан с выдающимся комфортом и продвинутыми технологиями.',
+    specs: {
+      engine: '4.0L V8 Twin-Turbo',
+      power: '453 л.с.',
+      acceleration: '4.5 сек до 100 км/ч',
+      maxSpeed: '250 км/ч'
+    },
+    modelUrl: 'https://sketchfab.com/3d-models/audi-a8-l-2018-7a387b439ff44defbedccd3088fd2a83'
   },
   {
-    id: 20,
+    id: 'car19',
+    name: 'Lexus LS',
+    brand: 'Lexus',
+    model: 'LS 500h',
+    year: 2023,
+    category: 'business',
+    price: 15000,
+    image: '/images/lexus-ls.jpg',
+    description: 'Японский премиальный седан с гибридной силовой установкой и высочайшим уровнем комфорта.',
+    specs: {
+      engine: '3.5L V6 Hybrid',
+      power: '354 л.с.',
+      acceleration: '5.4 сек до 100 км/ч',
+      maxSpeed: '250 км/ч'
+    },
+    modelUrl: 'https://sketchfab.com/3d-models/lexus-ls-500-2018-afafed5c38744b9089aa1aa83c276f1e'
+  },
+  {
+    id: 'car20',
     name: 'Genesis G90',
-    category: 'business',
-    price: 15000,
-    priceUnit: 'день',
+    brand: 'Genesis',
+    model: 'G90 3.5T',
     year: 2023,
-    description: 'Флагманский седан корейского премиум-бренда с элегантным дизайном и богатым оснащением.',
-    image: 'https://images.unsplash.com/photo-1659445210808-6802f4120fd9?q=80&w=1972&auto=format&fit=crop',
-    modelUrl: 'https://sketchfab.com/3d-models/genesis-g90-2020-27f2e52be8fc41c9a47d3398909b33e1',
-    color: 'Темно-зеленый',
-    transmission: 'Автомат',
-    engine: '3.5L Twin-Turbo V6, 380 л.с.',
-    consumption: '10.5 л/100 км',
-    features: ['Пневмоподвеска с превентивным сканированием дороги', 'Система очистки воздуха', 'Акустические стекла'],
-    available: true
+    category: 'business',
+    price: 14000,
+    image: '/images/genesis-g90.jpg',
+    description: 'Корейский представительский седан с элегантным дизайном и богатым оснащением.',
+    specs: {
+      engine: '3.5L V6 Twin-Turbo',
+      power: '375 л.с.',
+      acceleration: '5.1 сек до 100 км/ч',
+      maxSpeed: '240 км/ч'
+    },
+    modelUrl: 'https://sketchfab.com/3d-models/genesis-g90-2023-9c80c4aa599149ff9b12d48a3e2a5c3c'
   },
   {
-    id: 21,
-    name: 'BMW X7',
-    category: 'business',
-    price: 18000,
-    priceUnit: 'день',
+    id: 'car21',
+    name: 'Jaguar XJ',
+    brand: 'Jaguar',
+    model: 'XJ L',
     year: 2023,
-    description: 'Роскошный полноразмерный внедорожник с тремя рядами сидений и превосходной динамикой.',
-    image: 'https://images.unsplash.com/photo-1580414057403-c5f451f30e1c?q=80&w=2087&auto=format&fit=crop',
-    modelUrl: 'https://sketchfab.com/3d-models/bmw-x7-2019-1e6f0a7c8b574e5ba50e66773a1613d1',
-    color: 'Черный сапфир',
-    transmission: 'Автомат',
-    engine: '4.4L TwinPower Turbo V8, 530 л.с.',
-    consumption: '11.4 л/100 км',
-    features: ['Панорамная стеклянная крыша', 'Sky Lounge с LED-подсветкой', '5-зонный климат-контроль'],
-    available: true
+    category: 'business',
+    price: 15500,
+    image: '/images/jaguar-xj.jpg',
+    description: 'Элегантный британский седан, сочетающий роскошь и спортивный характер.',
+    specs: {
+      engine: '5.0L V8 Supercharged',
+      power: '517 л.с.',
+      acceleration: '4.6 сек до 100 км/ч',
+      maxSpeed: '280 км/ч'
+    },
+    modelUrl: 'https://sketchfab.com/3d-models/jaguar-xj-2019-97ff584bb00d4adbae6dd8f68caf07e9'
   },
   {
-    id: 22,
-    name: 'Mercedes-Benz GLS 580',
+    id: 'car22',
+    name: 'Volvo S90',
+    brand: 'Volvo',
+    model: 'S90 Recharge',
+    year: 2023,
+    category: 'business',
+    price: 13000,
+    image: '/images/volvo-s90.jpg',
+    description: 'Шведский премиальный седан с гибридной силовой установкой и скандинавским дизайном.',
+    specs: {
+      engine: '2.0L I4 Plug-in Hybrid',
+      power: '455 л.с.',
+      acceleration: '4.9 сек до 100 км/ч',
+      maxSpeed: '250 км/ч'
+    },
+    modelUrl: 'https://sketchfab.com/3d-models/volvo-s90-2017-25f0c2c5cd224c9ea0cfcfb5bd2c9d70'
+  },
+  {
+    id: 'car23',
+    name: 'Cadillac CT6',
+    brand: 'Cadillac',
+    model: 'CT6 V-Sport',
+    year: 2023,
+    category: 'business',
+    price: 14500,
+    image: '/images/cadillac-ct6.jpg',
+    description: 'Американский представительский седан с мощным двигателем и современными технологиями.',
+    specs: {
+      engine: '4.2L V8 Twin-Turbo',
+      power: '550 л.с.',
+      acceleration: '4.2 сек до 100 км/ч',
+      maxSpeed: '250 км/ч'
+    },
+    modelUrl: 'https://sketchfab.com/3d-models/cadillac-ct6-2016-0ab8a8cdce804a91be28ef5f341d1fe7'
+  },
+  {
+    id: 'car24',
+    name: 'Maserati Quattroporte',
+    brand: 'Maserati',
+    model: 'Quattroporte Trofeo',
+    year: 2023,
     category: 'business',
     price: 19000,
-    priceUnit: 'день',
-    year: 2023,
-    description: 'Флагманский внедорожник Mercedes-Benz с роскошным салоном и инновационными технологиями.',
-    image: 'https://images.unsplash.com/photo-1622244358459-6c5b29fc4f10?q=80&w=1974&auto=format&fit=crop',
-    modelUrl: 'https://sketchfab.com/3d-models/mercedes-benz-gls-580-2020-cf6066bab0f34b608ae3c472a156f10e',
-    color: 'Серебристый',
-    transmission: 'Автомат',
-    engine: '4.0L V8 + EQ Boost, 489 л.с.',
-    consumption: '10.8 л/100 км',
-    features: ['Пневмоподвеска AIRMATIC', 'Внедорожный пакет', 'Система E-ACTIVE BODY CONTROL'],
-    available: true
+    image: '/images/maserati-quattroporte.jpg',
+    description: 'Итальянский спортивный седан с характерным звуком двигателя и утонченным дизайном.',
+    specs: {
+      engine: '3.8L V8 Twin-Turbo',
+      power: '580 л.с.',
+      acceleration: '4.5 сек до 100 км/ч',
+      maxSpeed: '326 км/ч'
+    },
+    modelUrl: 'https://sketchfab.com/3d-models/maserati-quattroporte-gts-gransport-2017-1fcbe8afcc83428ca993bbc0fa9a75e5'
   },
   {
-    id: 23,
-    name: 'Audi e-tron GT',
-    category: 'business',
-    price: 22000,
-    priceUnit: 'день',
+    id: 'car25',
+    name: 'Lincoln Continental',
+    brand: 'Lincoln',
+    model: 'Continental Reserve',
     year: 2023,
-    description: 'Электрический гран-турер с впечатляющим дизайном и производительностью.',
-    image: 'https://images.unsplash.com/photo-1617994452722-4190c6dcb321?q=80&w=2070&auto=format&fit=crop',
-    modelUrl: 'https://sketchfab.com/3d-models/audi-e-tron-gt-2022-85dca206ed7d4b919f08316d271b50ef',
-    color: 'Серый',
-    transmission: 'Автомат',
-    engine: 'Электрический, 530 л.с.',
-    consumption: '19.6 кВтч/100 км',
-    features: ['800-вольтовая архитектура', 'Адаптивная пневмоподвеска', 'Подруливающая задняя ось'],
-    available: true
+    category: 'business',
+    price: 12000,
+    image: '/images/lincoln-continental.jpg',
+    description: 'Роскошный американский седан с элегантным дизайном и высоким уровнем комфорта.',
+    specs: {
+      engine: '3.0L V6 Twin-Turbo',
+      power: '400 л.с.',
+      acceleration: '5.5 сек до 100 км/ч',
+      maxSpeed: '250 км/ч'
+    },
+    modelUrl: 'https://sketchfab.com/3d-models/lincoln-continental-2017-c21a1d3c9f45479eabadcc4af7bb22ba'
   },
   {
-    id: 24,
-    name: 'Tesla Model S Plaid',
-    category: 'business',
-    price: 23000,
-    priceUnit: 'день',
+    id: 'car26',
+    name: 'Kia K900',
+    brand: 'Kia',
+    model: 'K900 Luxury',
     year: 2023,
-    description: 'Самый быстрый серийный электромобиль с инновационным интерьером.',
-    image: 'https://images.unsplash.com/photo-1617704548060-ff170e70f106?q=80&w=2070&auto=format&fit=crop',
-    modelUrl: 'https://sketchfab.com/3d-models/tesla-model-s-2021-a2e60a52c7e14ed8b85b9b4d5353175b',
-    color: 'Белый',
-    transmission: 'Автомат',
-    engine: 'Электрический, трехмоторный, 1020 л.с.',
-    consumption: '19.3 кВтч/100 км',
-    features: ['Разгон 0-100 км/ч за 2.1 сек.', 'Автопилот', 'Игровой компьютер в салоне'],
-    available: true
+    category: 'business',
+    price: 11000,
+    image: '/images/kia-k900.jpg',
+    description: 'Корейский премиальный седан с богатой комплектацией и доступной ценой.',
+    specs: {
+      engine: '3.3L V6 Twin-Turbo',
+      power: '365 л.с.',
+      acceleration: '5.7 сек до 100 км/ч',
+      maxSpeed: '240 км/ч'
+    },
+    modelUrl: 'https://sketchfab.com/3d-models/kia-k900-2019-7cce19ba0e0a4c0c82d8c7889e6f5c52'
   },
   {
-    id: 25,
-    name: 'Range Rover Autobiography',
-    category: 'business',
-    price: 21000,
-    priceUnit: 'день',
+    id: 'car27',
+    name: 'Chrysler 300',
+    brand: 'Chrysler',
+    model: '300C',
     year: 2023,
-    description: 'Флагманский внедорожник с непревзойденной роскошью и проходимостью.',
-    image: 'https://images.unsplash.com/photo-1555626906-fcf10d6851b4?q=80&w=2070&auto=format&fit=crop',
-    modelUrl: 'https://sketchfab.com/3d-models/range-rover-autobiography-2022-1ad307f554ca430f896628f488d0bffa',
-    color: 'Зеленый',
-    transmission: 'Автомат',
-    engine: '4.4L Twin-Turbo V8, 523 л.с.',
-    consumption: '11.8 л/100 км',
-    features: ['Подвеска с предиктивной адаптацией', 'Сенсорные экраны для задних пассажиров', 'Атмосферная подсветка'],
-    available: true
+    category: 'business',
+    price: 10000,
+    image: '/images/chrysler-300.jpg',
+    description: 'Американский полноразмерный седан с характерным дизайном и мощным двигателем.',
+    specs: {
+      engine: '6.4L V8 HEMI',
+      power: '485 л.с.',
+      acceleration: '4.5 сек до 100 км/ч',
+      maxSpeed: '280 км/ч'
+    },
+    modelUrl: 'https://sketchfab.com/3d-models/chrysler-300-srt8-2012-56ab9e4ded2f4f4d8b3925c3b1ff9cab'
   },
   {
-    id: 26,
-    name: 'Jaguar I-PACE',
+    id: 'car28',
+    name: 'Infiniti Q70',
+    brand: 'Infiniti',
+    model: 'Q70L 5.6',
+    year: 2023,
     category: 'business',
-    price: 16000,
-    priceUnit: 'день',
-    year: 2022,
-    description: 'Электрический кроссовер премиум-класса с впечатляющей динамикой и запасом хода.',
-    image: 'https://images.unsplash.com/photo-1606016159991-dfe4f2746ad5?q=80&w=2067&auto=format&fit=crop',
-    modelUrl: 'https://sketchfab.com/3d-models/jaguar-i-pace-2019-0a8a0d9d0b1d4e428fe5f11dfa01ac51',
-    color: 'Красный',
-    transmission: 'Автомат',
-    engine: 'Электрический, 400 л.с.',
-    consumption: '22 кВтч/100 км',
-    features: ['Адаптивная пневмоподвеска', 'Панорамная крыша', 'Система активного шумоподавления'],
-    available: true
+    price: 12500,
+    image: '/images/infiniti-q70.jpg',
+    description: 'Японский бизнес-седан с выразительным дизайном и премиальным интерьером.',
+    specs: {
+      engine: '5.6L V8',
+      power: '420 л.с.',
+      acceleration: '5.3 сек до 100 км/ч',
+      maxSpeed: '250 км/ч'
+    },
+    modelUrl: 'https://sketchfab.com/3d-models/infiniti-q70-2016-66c5ec84a62d4e77b92d00c5ee40df6a'
   },
   {
-    id: 27,
-    name: 'Volvo XC90 Recharge',
-    category: 'business',
-    price: 15000,
-    priceUnit: 'день',
+    id: 'car29',
+    name: 'Acura RLX',
+    brand: 'Acura',
+    model: 'RLX Sport Hybrid',
     year: 2023,
-    description: 'Флагманский гибридный внедорожник с передовыми системами безопасности.',
-    image: 'https://images.unsplash.com/photo-1571730471836-c48d2c78f8a6?q=80&w=1974&auto=format&fit=crop',
-    modelUrl: 'https://sketchfab.com/3d-models/volvo-xc90-2020-16cc92a4ae3647c8b48dda39c037f1bd',
-    color: 'Синий металлик',
-    transmission: 'Автомат',
-    engine: '2.0L + электромотор, 455 л.с.',
-    consumption: '2.5 л/100 км (комбинированный)',
-    features: ['Пакет безопасности City Safety', 'Аудиосистема Bowers & Wilkins', 'Воздушная подвеска'],
-    available: true
+    category: 'business',
+    price: 11500,
+    image: '/images/acura-rlx.jpg',
+    description: 'Премиальный гибридный седан с продвинутыми технологиями и отличной управляемостью.',
+    specs: {
+      engine: '3.5L V6 Hybrid',
+      power: '377 л.с.',
+      acceleration: '5.1 сек до 100 км/ч',
+      maxSpeed: '240 км/ч'
+    },
+    modelUrl: 'https://sketchfab.com/3d-models/acura-rlx-sport-hybrid-2018-1e30eeb7e63643c896db2b6d5cbee72a'
   },
   {
-    id: 28,
-    name: 'Cadillac Escalade',
-    category: 'business',
-    price: 17000,
-    priceUnit: 'день',
+    id: 'car30',
+    name: 'Genesis G80',
+    brand: 'Genesis',
+    model: 'G80 Sport',
     year: 2023,
-    description: 'Полноразмерный американский люксовый внедорожник с впечатляющим оснащением.',
-    image: 'https://images.unsplash.com/photo-1621806232899-9e5006ee1be1?q=80&w=1974&auto=format&fit=crop',
-    modelUrl: 'https://sketchfab.com/3d-models/cadillac-escalade-2021-9d2a96af21cc4c22bf77aa6a6c13a8cb',
-    color: 'Черный',
-    transmission: 'Автомат',
-    engine: '6.2L V8, 420 л.с.',
-    consumption: '14.7 л/100 км',
-    features: ['Изогнутый OLED-дисплей', 'Система ночного видения', 'Аудиосистема AKG Studio с 36 динамиками'],
-    available: true
+    category: 'business',
+    price: 13500,
+    image: '/images/genesis-g80.jpg',
+    description: 'Корейский спортивный бизнес-седан с элегантным дизайном и доступной ценой.',
+    specs: {
+      engine: '3.5L V6 Twin-Turbo',
+      power: '375 л.с.',
+      acceleration: '4.9 сек до 100 км/ч',
+      maxSpeed: '250 км/ч'
+    },
+    modelUrl: 'https://sketchfab.com/3d-models/genesis-g80-2021-21c9ccb9f8fe40d385a1a85636ee4c32'
   },
-  {
-    id: 29,
-    name: 'Lucid Air Dream Edition',
-    category: 'business',
-    price: 25000,
-    priceUnit: 'день',
-    year: 2023,
-    description: 'Революционный электрический седан с рекордным запасом хода и роскошным салоном.',
-    image: 'https://images.unsplash.com/photo-1647343011549-79c285854eda?q=80&w=2070&auto=format&fit=crop',
-    modelUrl: 'https://sketchfab.com/3d-models/lucid-air-2021-a2e60a52c7e14ed8b85b9b4d5353175b',
-    color: 'Серебристо-белый',
-    transmission: 'Автомат',
-    engine: 'Электрический, 1111 л.с.',
-    consumption: '16.9 кВтч/100 км',
-    features: ['Запас хода до 837 км', 'Система DreamDrive Pro', '34-дюймовый изогнутый дисплей'],
-    available: true
-  },
-  {
-    id: 30,
-    name: 'Rivian R1S',
-    category: 'business',
-    price: 18000,
-    priceUnit: 'день',
-    year: 2023,
-    description: 'Инновационный электрический внедорожник с выдающимися внедорожными возможностями.',
-    image: 'https://images.unsplash.com/photo-1662912869683-fd280699078e?q=80&w=2070&auto=format&fit=crop',
-    modelUrl: 'https://sketchfab.com/3d-models/rivian-r1s-suv-2022-57a12f447cf942f2a2e2495b71db6620',
-    color: 'Синий',
-    transmission: 'Автомат',
-    engine: 'Электрический, четырехмоторный, 835 л.с.',
-    consumption: '23 кВтч/100 км',
-    features: ['Адаптивная пневмоподвеска', 'Режим танк-разворота', 'Панорамная стеклянная крыша'],
-    available: true
-  }
 ];
 
 // Бронирования
-export const reservations: Reservation[] = [
+const reservations: Reservation[] = [
   {
-    id: 1,
-    userId: 1,
-    carId: 3,
-    startDate: '2023-05-10T10:00:00Z',
-    endDate: '2023-05-15T10:00:00Z',
-    status: 'completed',
-    totalPrice: 140000,
-    createdAt: '2023-05-01T15:30:00Z'
+    id: 'res1',
+    userId: 'user1',
+    carId: 'car1',
+    startDate: '2025-04-28',
+    endDate: '2025-05-02',
+    status: 'confirmed',
+    totalPrice: 125000,
+    createdAt: '2025-04-20T10:30:00'
   },
   {
-    id: 2,
-    userId: 1,
-    carId: 7,
-    startDate: '2023-06-20T09:00:00Z',
-    endDate: '2023-06-22T18:00:00Z',
-    status: 'completed',
-    totalPrice: 70000,
-    createdAt: '2023-06-10T11:45:00Z'
-  },
-  {
-    id: 3,
-    userId: 2,
-    carId: 11,
-    startDate: '2023-07-05T12:00:00Z',
-    endDate: '2023-07-07T12:00:00Z',
-    status: 'cancelled',
-    totalPrice: 76000,
-    createdAt: '2023-06-25T09:20:00Z'
-  },
-  {
-    id: 4,
-    userId: 1,
-    carId: 16,
-    startDate: '2023-08-15T14:00:00Z',
-    endDate: '2023-08-18T10:00:00Z',
-    status: 'active',
-    totalPrice: 60000,
-    createdAt: '2023-08-01T16:50:00Z'
-  },
-  {
-    id: 5,
-    userId: 2,
-    carId: 9,
-    startDate: '2023-09-25T11:00:00Z',
-    endDate: '2023-09-30T11:00:00Z',
+    id: 'res2',
+    userId: 'user1',
+    carId: 'car7',
+    startDate: '2025-05-15',
+    endDate: '2025-05-20',
     status: 'pending',
-    totalPrice: 170000,
-    createdAt: '2023-09-15T18:30:00Z'
+    totalPrice: 200000,
+    createdAt: '2025-04-22T14:45:00'
   }
 ];
 
 // Отзывы
-export const reviews: Review[] = [
+const reviews: Review[] = [
   {
-    id: 1,
-    userId: 1,
-    carId: 3,
+    id: 'rev1',
+    userId: 'user1',
+    carId: 'car1',
     rating: 5,
-    comment: 'Непередаваемые ощущения от вождения Porsche Cayenne Turbo GT! Мощь, комфорт и престиж в одном автомобиле.',
-    createdAt: '2023-05-16T14:25:00Z'
+    text: 'Невероятный автомобиль! Управляемость на высшем уровне.',
+    date: '2025-04-10'
   },
   {
-    id: 2,
-    userId: 1,
-    carId: 7,
-    rating: 5,
-    comment: 'Bentley Continental GT Speed - лучший автомобиль, который я когда-либо водил. Роскошь и спортивный характер идеально сбалансированы.',
-    createdAt: '2023-06-23T19:15:00Z'
-  },
-  {
-    id: 3,
-    userId: 2,
-    carId: 11,
+    id: 'rev2',
+    userId: 'user1',
+    carId: 'car7',
     rating: 4,
-    comment: 'Lamborghini Huracan STO - невероятный автомобиль, но слишком привлекает внимание. Если вы не готовы к постоянным фотографиям, выбирайте что-то менее заметное.',
-    createdAt: '2023-07-08T10:40:00Z'
-  },
-  {
-    id: 4,
-    userId: 2,
-    carId: 16,
-    rating: 5,
-    comment: 'Mercedes-Benz S500 - эталон комфорта и технологий. Идеальный автомобиль для деловых поездок и дальних путешествий.',
-    createdAt: '2023-08-19T12:10:00Z'
+    text: 'Отличный автомобиль, но расход топлива высоковат.',
+    date: '2025-03-25'
   }
 ];
 
-// Текущий пользователь (для имитации авторизации)
-export const currentUser = users[0];
+// Экспорт данных
+export {
+  currentUser,
+  cars,
+  reservations,
+  reviews
+};

@@ -1,222 +1,198 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import Layout from '@/components/Layout';
 import { Button } from '@/components/ui/button';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Car, Edit, User, Calendar, Clock, CheckCircle, AlertCircle } from 'lucide-react';
 import { currentUser, reservations, cars } from '@/data/database';
-import PageContent from './PageContent';
 
 const ProfilePage = () => {
   const [activeTab, setActiveTab] = useState('profile');
-  
-  // Получаем бронирования текущего пользователя
-  const userReservations = reservations.filter(reservation => 
-    reservation.userId === currentUser.id
-  );
-  
-  // Функция для форматирования даты
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return new Intl.DateTimeFormat('ru-RU', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    }).format(date);
+
+  // Находим бронирования пользователя
+  const userReservations = reservations.filter(res => res.userId === currentUser.id);
+
+  // Для каждого бронирования находим данные об автомобиле
+  const reservationsWithDetails = userReservations.map(reservation => {
+    const car = cars.find(car => car.id === reservation.carId);
+    return { ...reservation, car };
+  });
+
+  // Получаем статус бронирования для отображения
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'confirmed': return 'text-green-500';
+      case 'pending': return 'text-yellow-500';
+      case 'cancelled': return 'text-red-500';
+      default: return 'text-gray-500';
+    }
   };
-  
-  // Функция для получения статуса на русском языке
+
   const getStatusText = (status: string) => {
-    switch(status) {
-      case 'pending': return 'В ожидании';
-      case 'active': return 'Активно';
-      case 'completed': return 'Завершено';
+    switch (status) {
+      case 'confirmed': return 'Подтверждено';
+      case 'pending': return 'Ожидает подтверждения';
       case 'cancelled': return 'Отменено';
+      case 'completed': return 'Завершено';
       default: return status;
     }
   };
 
-  // Функция для получения цвета бейджа в зависимости от статуса
-  const getStatusColor = (status: string) => {
-    switch(status) {
-      case 'pending': return 'bg-yellow-500';
-      case 'active': return 'bg-green-500';
-      case 'completed': return 'bg-blue-500';
-      case 'cancelled': return 'bg-red-500';
-      default: return 'bg-gray-500';
-    }
-  };
-
   return (
-    <PageContent>
-      <div className="container mx-auto px-4 pt-28 pb-20">
+    <Layout>
+      <div className="container mx-auto px-4 py-12">
         <div className="max-w-5xl mx-auto">
-          <h1 className="text-4xl font-bold mb-10">Личный кабинет</h1>
+          <h1 className="text-3xl font-bold mb-8">Личный кабинет</h1>
           
-          <Tabs defaultValue="profile" onValueChange={setActiveTab}>
-            <TabsList className="mb-8">
-              <TabsTrigger value="profile">Профиль</TabsTrigger>
-              <TabsTrigger value="reservations">Мои бронирования</TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value="profile">
-              <Card className="bg-gray-900 border-gray-800">
-                <CardHeader>
-                  <CardTitle>Профиль пользователя</CardTitle>
-                  <CardDescription className="text-gray-400">
-                    Управляйте личной информацией и бронированиями
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex flex-col md:flex-row gap-8 items-start">
-                    <div className="flex flex-col items-center space-y-4">
-                      <Avatar className="h-32 w-32">
-                        <AvatarImage src={currentUser.avatar} alt={currentUser.name} />
-                        <AvatarFallback>{currentUser.name.substring(0, 2).toUpperCase()}</AvatarFallback>
-                      </Avatar>
-                      <Button variant="outline">Изменить фото</Button>
+          {/* Табы */}
+          <div className="flex border-b border-gray-800 mb-8">
+            <button 
+              className={`py-3 px-6 font-medium ${activeTab === 'profile' ? 'border-b-2 border-white text-white' : 'text-gray-400 hover:text-white'}`}
+              onClick={() => setActiveTab('profile')}
+            >
+              <User className="inline-block mr-2 h-5 w-5" />
+              Профиль
+            </button>
+            <button 
+              className={`py-3 px-6 font-medium ${activeTab === 'reservations' ? 'border-b-2 border-white text-white' : 'text-gray-400 hover:text-white'}`}
+              onClick={() => setActiveTab('reservations')}
+            >
+              <Calendar className="inline-block mr-2 h-5 w-5" />
+              Мои бронирования
+            </button>
+          </div>
+          
+          {/* Контент профиля */}
+          {activeTab === 'profile' && (
+            <div className="bg-gray-900 rounded-lg p-8">
+              <div className="flex flex-col md:flex-row items-start md:items-center gap-8 mb-10">
+                <div className="w-32 h-32 rounded-full bg-gray-800 flex items-center justify-center">
+                  <User className="h-16 w-16 text-gray-400" />
+                </div>
+                <div>
+                  <h2 className="text-2xl font-bold mb-2">{currentUser.name}</h2>
+                  <p className="text-gray-400">Клиент MEOWEST с 2025 года</p>
+                  <Button variant="outline" className="mt-4">
+                    <Edit className="mr-2 h-4 w-4" />
+                    Редактировать профиль
+                  </Button>
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div>
+                  <h3 className="text-lg font-medium mb-4">Личная информация</h3>
+                  <div className="space-y-4">
+                    <div>
+                      <p className="text-sm text-gray-400">Имя</p>
+                      <p>{currentUser.name}</p>
                     </div>
-                    
-                    <div className="flex-1 space-y-6">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                          <label className="text-sm text-gray-400">Имя</label>
-                          <div className="text-lg font-medium">{currentUser.name}</div>
-                        </div>
-                        <div>
-                          <label className="text-sm text-gray-400">Email</label>
-                          <div className="text-lg font-medium">{currentUser.email}</div>
-                        </div>
-                        <div>
-                          <label className="text-sm text-gray-400">Телефон</label>
-                          <div className="text-lg font-medium">{currentUser.phone}</div>
-                        </div>
-                        <div>
-                          <label className="text-sm text-gray-400">Дата регистрации</label>
-                          <div className="text-lg font-medium">{formatDate(currentUser.createdAt)}</div>
-                        </div>
-                      </div>
-                      
-                      <div className="pt-4 space-y-4">
-                        <h3 className="text-xl font-semibold">Настройки аккаунта</h3>
-                        <div className="flex flex-col space-y-4">
-                          <Button variant="outline">Изменить личные данные</Button>
-                          <Button variant="outline">Изменить пароль</Button>
-                          <Button variant="outline" className="text-red-500 hover:text-red-400 hover:bg-red-950 border-red-800">
-                            Удалить аккаунт
-                          </Button>
-                        </div>
-                      </div>
+                    <div>
+                      <p className="text-sm text-gray-400">Email</p>
+                      <p>{currentUser.email}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-400">Телефон</p>
+                      <p>{currentUser.phone}</p>
                     </div>
                   </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-            
-            <TabsContent value="reservations">
-              <Card className="bg-gray-900 border-gray-800">
-                <CardHeader>
-                  <CardTitle>История бронирований</CardTitle>
-                  <CardDescription className="text-gray-400">
-                    Все ваши заказы и бронирования автомобилей
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  {userReservations.length > 0 ? (
-                    <div className="space-y-6">
-                      {userReservations.map(reservation => {
-                        // Получаем информацию об автомобиле
-                        const car = cars.find(car => car.id === reservation.carId);
-                        if (!car) return null;
-                        
-                        const carImage = car.image.startsWith('http') 
-                          ? car.image 
-                          : `/images/cars/${car.id}.jpg`;
-                        
-                        return (
-                          <div key={reservation.id} className="flex flex-col md:flex-row gap-6 border-b border-gray-800 pb-6">
-                            <div className="w-full md:w-1/4">
-                              <div className="relative aspect-video rounded-lg overflow-hidden mb-3">
-                                <img 
-                                  src={carImage} 
-                                  alt={car.name} 
-                                  className="w-full h-full object-cover"
-                                />
-                              </div>
-                              <Badge className={`${getStatusColor(reservation.status)}`}>
-                                {getStatusText(reservation.status)}
-                              </Badge>
+                </div>
+                
+                <div>
+                  <h3 className="text-lg font-medium mb-4">Статистика</h3>
+                  <div className="space-y-4">
+                    <div>
+                      <p className="text-sm text-gray-400">Всего бронирований</p>
+                      <p>{userReservations.length}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-400">Активные бронирования</p>
+                      <p>{userReservations.filter(res => res.status === 'confirmed' || res.status === 'pending').length}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-400">Завершенные бронирования</p>
+                      <p>{userReservations.filter(res => res.status === 'completed').length}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+          
+          {/* Контент бронирований */}
+          {activeTab === 'reservations' && (
+            <div>
+              <h2 className="text-2xl font-bold mb-6">Мои бронирования</h2>
+              
+              {reservationsWithDetails.length === 0 ? (
+                <div className="bg-gray-900 rounded-lg p-8 text-center">
+                  <Car className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+                  <h3 className="text-xl font-bold mb-2">У вас пока нет бронирований</h3>
+                  <p className="text-gray-400 mb-6">Выберите автомобиль из нашего автопарка и создайте своё первое бронирование</p>
+                  <Link to="/cars">
+                    <Button>Выбрать автомобиль</Button>
+                  </Link>
+                </div>
+              ) : (
+                <div className="space-y-6">
+                  {reservationsWithDetails.map(reservation => (
+                    <div key={reservation.id} className="bg-gray-900 rounded-lg p-6">
+                      <div className="flex flex-col md:flex-row gap-6">
+                        <div className="md:w-1/3">
+                          {reservation.car && (
+                            <div className="rounded-lg overflow-hidden h-48">
+                              <img 
+                                src={reservation.car.image || `https://source.unsplash.com/random/800x600/?car,${reservation.car.brand}`} 
+                                alt={reservation.car.name} 
+                                className="w-full h-full object-cover"
+                              />
                             </div>
-                            
-                            <div className="flex-1">
-                              <h3 className="text-xl font-bold mb-2">{car.name}</h3>
-                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                                <div>
-                                  <p className="text-sm text-gray-400">Дата начала</p>
-                                  <p>{formatDate(reservation.startDate)}</p>
-                                </div>
-                                <div>
-                                  <p className="text-sm text-gray-400">Дата окончания</p>
-                                  <p>{formatDate(reservation.endDate)}</p>
-                                </div>
-                                <div>
-                                  <p className="text-sm text-gray-400">Номер заказа</p>
-                                  <p>#{reservation.id.toString().padStart(6, '0')}</p>
-                                </div>
-                                <div>
-                                  <p className="text-sm text-gray-400">Стоимость</p>
-                                  <p className="font-semibold">{reservation.totalPrice.toLocaleString()} ₽</p>
-                                </div>
-                              </div>
-                              
-                              <div className="flex flex-wrap gap-2">
-                                {reservation.status === 'pending' && (
-                                  <>
-                                    <Button variant="default">Подтвердить</Button>
-                                    <Button variant="outline">Отменить</Button>
-                                  </>
-                                )}
-                                
-                                {reservation.status === 'active' && (
-                                  <Button variant="outline">Продлить аренду</Button>
-                                )}
-                                
-                                {reservation.status === 'completed' && (
-                                  <Button asChild variant="outline">
-                                    <Link to={`/cars/${car.id}`}>
-                                      Забронировать снова
-                                    </Link>
-                                  </Button>
-                                )}
-                                
-                                <Button variant="outline">
-                                  Детали заказа
-                                </Button>
-                              </div>
+                          )}
+                        </div>
+                        <div className="md:w-2/3">
+                          <div className="flex justify-between items-start mb-4">
+                            <h3 className="text-xl font-bold">{reservation.car?.name || 'Неизвестный автомобиль'}</h3>
+                            <span className={`flex items-center ${getStatusColor(reservation.status)}`}>
+                              {reservation.status === 'confirmed' && <CheckCircle className="mr-1 h-4 w-4" />}
+                              {reservation.status === 'pending' && <Clock className="mr-1 h-4 w-4" />}
+                              {reservation.status === 'cancelled' && <AlertCircle className="mr-1 h-4 w-4" />}
+                              {getStatusText(reservation.status)}
+                            </span>
+                          </div>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                            <div>
+                              <p className="text-sm text-gray-400">Дата начала</p>
+                              <p>{new Date(reservation.startDate).toLocaleDateString('ru-RU')}</p>
+                            </div>
+                            <div>
+                              <p className="text-sm text-gray-400">Дата окончания</p>
+                              <p>{new Date(reservation.endDate).toLocaleDateString('ru-RU')}</p>
+                            </div>
+                            <div>
+                              <p className="text-sm text-gray-400">Дата создания</p>
+                              <p>{new Date(reservation.createdAt).toLocaleDateString('ru-RU')}</p>
+                            </div>
+                            <div>
+                              <p className="text-sm text-gray-400">Общая стоимость</p>
+                              <p>{reservation.totalPrice.toLocaleString('ru-RU')} ₽</p>
                             </div>
                           </div>
-                        );
-                      })}
+                          <div className="flex flex-wrap gap-2">
+                            {reservation.status === 'pending' && (
+                              <Button variant="destructive">Отменить бронирование</Button>
+                            )}
+                            <Button variant="outline">Подробнее</Button>
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                  ) : (
-                    <div className="text-center py-10">
-                      <h3 className="text-xl font-semibold mb-2">У вас пока нет бронирований</h3>
-                      <p className="text-gray-400 mb-6">Выберите автомобиль из нашего премиального автопарка, чтобы забронировать его</p>
-                      <Button asChild>
-                        <Link to="/cars">Перейти к автомобилям</Link>
-                      </Button>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            </TabsContent>
-          </Tabs>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
-    </PageContent>
+    </Layout>
   );
 };
 

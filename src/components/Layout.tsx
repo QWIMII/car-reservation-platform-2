@@ -14,9 +14,9 @@ const Layout: React.FC<LayoutProps> = ({
   textColor = "text-white" 
 }) => {
   return (
-    <div className={`min-h-screen ${bgColor} ${textColor}`}>
+    <div className={`min-h-screen flex flex-col ${bgColor} ${textColor}`}>
       <Navbar />
-      <main>
+      <main className="flex-grow pt-20">
         {children}
       </main>
       <Footer />
