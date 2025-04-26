@@ -1,47 +1,52 @@
+// Типы данных для пользователей
+export interface User {
+  id: number;
+  name: string;
+  email: string;
+  phone: string;
+  password: string;
+  avatar: string;
+  role: 'admin' | 'client';
+  createdAt: string;
+}
 
+// Типы данных для автомобилей
 export interface Car {
-  id: string;
-  brand: string;
-  model: string;
-  year: number;
-  price: number;
+  id: number;
+  name: string;
   category: 'porsche' | 'luxury' | 'business';
-  images: string[];
+  price: number;
+  priceUnit: string;
+  year: number;
+  description: string;
+  image: string;
   modelUrl: string; // URL для 3D модели
+  color: string;
+  transmission: string;
+  engine: string;
+  consumption: string;
   features: string[];
-  specs: {
-    engine: string;
-    power: string;
-    acceleration: string;
-    topSpeed: string;
-  };
   available: boolean;
 }
 
-export interface User {
-  id: string;
-  name: string;
-  email: string;
-  password: string;
-  phone: string;
-  licenseNumber: string;
-}
-
+// Типы данных для бронирований
 export interface Reservation {
-  id: string;
-  userId: string;
-  carId: string;
+  id: number;
+  userId: number;
+  carId: number;
   startDate: string;
   endDate: string;
-  status: 'pending' | 'confirmed' | 'completed' | 'cancelled';
+  status: 'pending' | 'active' | 'completed' | 'cancelled';
   totalPrice: number;
+  createdAt: string;
 }
 
+// Типы данных для отзывов
 export interface Review {
-  id: string;
-  userId: string;
-  carId: string;
+  id: number;
+  userId: number;
+  carId: number;
   rating: number;
   comment: string;
-  date: string;
+  createdAt: string;
 }

@@ -1,172 +1,177 @@
-
 import { useState } from 'react';
-import Navbar from '@/components/Navbar';
-import CarCard from '@/components/CarCard';
-import { cars, getCarsByCategory } from '@/data/database';
-import { Car } from '@/types';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Slider } from '@/components/ui/slider';
+import { CheckCircle, Search, Filter } from 'lucide-react';
+import CarCard from '@/components/CarCard';
+import { cars } from '@/data/database';
+import PageContent, { PageHeader, Section } from './PageContent';
 
 const CarsPage = () => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [priceRange, setPriceRange] = useState([0, 50000]);
-  const [sortOption, setSortOption] = useState('price-asc');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [minPrice, setMinPrice] = useState<number | ''>('');
+  const [maxPrice, setMaxPrice] = useState<number | ''>('');
+  const [showFilters, setShowFilters] = useState(false);
   
-  const porscheCars = getCarsByCategory('porsche');
-  const luxuryCars = getCarsByCategory('luxury');
-  const businessCars = getCarsByCategory('business');
+  // Фильтрация автомобилей
+  const filteredCars = cars.filter(car => {
+    // Поиск по названию
+    const matchesSearch = car.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         car.description.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    // Фильтр по категории
+    const matchesCategory = selectedCategory ? car.category === selectedCategory : true;
+    
+    // Фильтр по цене
+    const matchesMinPrice = minPrice !== '' ? car.price >= minPrice : true;
+    const matchesMaxPrice = maxPrice !== '' ? car.price <= maxPrice : true;
+    
+    return matchesSearch && matchesCategory && matchesMinPrice && matchesMaxPrice;
+  });
   
-  const filterCars = (carsToFilter: Car[]) => {
-    return carsToFilter
-      .filter(car => 
-        (car.brand.toLowerCase().includes(searchTerm.toLowerCase()) || 
-         car.model.toLowerCase().includes(searchTerm.toLowerCase())) &&
-        (car.price >= priceRange[0] && car.price <= priceRange[1])
-      )
-      .sort((a, b) => {
-        switch(sortOption) {
-          case 'price-asc':
-            return a.price - b.price;
-          case 'price-desc':
-            return b.price - a.price;
-          case 'name-asc':
-            return `${a.brand} ${a.model}`.localeCompare(`${b.brand} ${b.model}`);
-          case 'name-desc':
-            return `${b.brand} ${b.model}`.localeCompare(`${a.brand} ${a.model}`);
-          default:
-            return 0;
-        }
-      });
+  // Получение уникальных категорий
+  const categories = Array.from(new Set(cars.map(car => car.category)));
+  
+  // Функция для перевода категории на русский
+  const getCategoryName = (category: string) => {
+    switch(category) {
+      case 'porsche': return 'Porsche';
+      case 'luxury': return 'Премиум';
+      case 'business': return 'Бизнес';
+      default: return category;
+    }
   };
   
-  const filteredPorscheCars = filterCars(porscheCars);
-  const filteredLuxuryCars = filterCars(luxuryCars);
-  const filteredBusinessCars = filterCars(businessCars);
-  const filteredAllCars = filterCars(cars);
+  // Сброс фильтров
+  const resetFilters = () => {
+    setSearchQuery('');
+    setSelectedCategory(null);
+    setMinPrice('');
+    setMaxPrice('');
+  };
   
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Navbar />
+    <PageContent>
+      <PageHeader
+        title="Наш автопарк"
+        description="Выберите автомобиль вашей мечты из нашей коллекции премиальных автомобилей"
+        backgroundImage="/images/cars-bg.jpg"
+      />
       
-      <div className="container mx-auto px-4 pt-24 pb-16">
-        <h1 className="text-3xl font-bold mb-4">Наш автопарк</h1>
-        <p className="text-gray-600 max-w-3xl mb-8">
-          Выберите автомобиль вашей мечты из нашей коллекции роскошных, спортивных и бизнес автомобилей. 
-          Все автомобили проходят тщательную проверку и обслуживание для обеспечения безопасности и комфорта.
-        </p>
-        
-        <div className="mb-8 bg-white p-4 rounded-lg shadow-sm">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
-              <label className="text-sm font-medium text-gray-700 mb-1 block">Поиск</label>
-              <Input 
-                placeholder="Поиск по марке и модели" 
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+      <Section bgColor="bg-white" textColor="text-black">
+        <div className="mb-8">
+          <div className="flex flex-col md:flex-row items-stretch gap-4 mb-6">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+              <Input
+                type="text"
+                placeholder="Поиск автомобиля..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10"
               />
             </div>
             
-            <div>
-              <label className="text-sm font-medium text-gray-700 mb-1 block">Сортировка</label>
-              <Select 
-                value={sortOption} 
-                onValueChange={(value) => setSortOption(value)}
+            <Button 
+              variant="outline" 
+              className="md:w-auto"
+              onClick={() => setShowFilters(!showFilters)}
+            >
+              <Filter className="mr-2 h-4 w-4" />
+              Фильтры
+            </Button>
+          </div>
+          
+          {showFilters && (
+            <div className="bg-gray-100 p-4 rounded-lg mb-6 transition-all">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                <div>
+                  <h3 className="font-medium mb-2">Категория</h3>
+                  <div className="space-y-2">
+                    {categories.map(category => (
+                      <div key={category} className="flex items-center">
+                        <button
+                          className={`flex items-center text-left w-full ${selectedCategory === category ? 'text-primary font-medium' : 'text-gray-700'}`}
+                          onClick={() => setSelectedCategory(selectedCategory === category ? null : category)}
+                        >
+                          {selectedCategory === category ? (
+                            <CheckCircle className="h-4 w-4 mr-2 text-primary" />
+                          ) : (
+                            <div className="h-4 w-4 mr-2 rounded-full border border-gray-400" />
+                          )}
+                          {getCategoryName(category)}
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                
+                <div>
+                  <h3 className="font-medium mb-2">Минимальная цена</h3>
+                  <Input
+                    type="number"
+                    placeholder="От"
+                    value={minPrice}
+                    onChange={(e) => setMinPrice(e.target.value ? Number(e.target.value) : '')}
+                  />
+                </div>
+                
+                <div>
+                  <h3 className="font-medium mb-2">Максимальная цена</h3>
+                  <Input
+                    type="number"
+                    placeholder="До"
+                    value={maxPrice}
+                    onChange={(e) => setMaxPrice(e.target.value ? Number(e.target.value) : '')}
+                  />
+                </div>
+              </div>
+              
+              <div className="flex justify-end">
+                <Button 
+                  variant="outline" 
+                  onClick={resetFilters}
+                >
+                  Сбросить фильтры
+                </Button>
+              </div>
+            </div>
+          )}
+          
+          <div className="flex justify-between items-center">
+            <h2 className="text-2xl font-bold">Результаты ({filteredCars.length})</h2>
+            
+            {(searchQuery || selectedCategory || minPrice || maxPrice) && (
+              <Button 
+                variant="ghost" 
+                onClick={resetFilters}
+                className="text-sm"
               >
-                <SelectTrigger>
-                  <SelectValue placeholder="Сортировка" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="price-asc">Цена (по возрастанию)</SelectItem>
-                  <SelectItem value="price-desc">Цена (по убыванию)</SelectItem>
-                  <SelectItem value="name-asc">Название (А-Я)</SelectItem>
-                  <SelectItem value="name-desc">Название (Я-А)</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            
-            <div>
-              <label className="text-sm font-medium text-gray-700 mb-1 block">
-                Цена в день: {priceRange[0].toLocaleString('ru-RU')} - {priceRange[1].toLocaleString('ru-RU')} ₽
-              </label>
-              <Slider
-                defaultValue={[0, 50000]}
-                max={50000}
-                step={1000}
-                value={priceRange}
-                onValueChange={setPriceRange}
-              />
-            </div>
+                Сбросить все фильтры
+              </Button>
+            )}
           </div>
         </div>
         
-        <Tabs defaultValue="all" className="space-y-6">
-          <TabsList className="grid w-full md:w-auto md:inline-grid grid-cols-2 md:grid-cols-4">
-            <TabsTrigger value="all">Все авто ({filteredAllCars.length})</TabsTrigger>
-            <TabsTrigger value="porsche">Porsche ({filteredPorscheCars.length})</TabsTrigger>
-            <TabsTrigger value="luxury">Люкс ({filteredLuxuryCars.length})</TabsTrigger>
-            <TabsTrigger value="business">Бизнес ({filteredBusinessCars.length})</TabsTrigger>
-          </TabsList>
-          
-          <TabsContent value="all">
-            {filteredAllCars.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredAllCars.map(car => (
-                  <CarCard key={car.id} car={car} />
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-12">
-                <p className="text-gray-500">Не найдено автомобилей, соответствующих критериям поиска</p>
-              </div>
-            )}
-          </TabsContent>
-          
-          <TabsContent value="porsche">
-            {filteredPorscheCars.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredPorscheCars.map(car => (
-                  <CarCard key={car.id} car={car} />
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-12">
-                <p className="text-gray-500">Не найдено автомобилей, соответствующих критериям поиска</p>
-              </div>
-            )}
-          </TabsContent>
-          
-          <TabsContent value="luxury">
-            {filteredLuxuryCars.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredLuxuryCars.map(car => (
-                  <CarCard key={car.id} car={car} />
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-12">
-                <p className="text-gray-500">Не найдено автомобилей, соответствующих критериям поиска</p>
-              </div>
-            )}
-          </TabsContent>
-          
-          <TabsContent value="business">
-            {filteredBusinessCars.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredBusinessCars.map(car => (
-                  <CarCard key={car.id} car={car} />
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-12">
-                <p className="text-gray-500">Не найдено автомобилей, соответствующих критериям поиска</p>
-              </div>
-            )}
-          </TabsContent>
-        </Tabs>
-      </div>
-    </div>
+        {filteredCars.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredCars.map(car => (
+              <CarCard key={car.id} car={car} />
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-12">
+            <h3 className="text-xl font-semibold mb-2">По вашему запросу ничего не найдено</h3>
+            <p className="text-gray-500 mb-6">Попробуйте изменить параметры поиска или сбросить фильтры</p>
+            <Button 
+              onClick={resetFilters}
+            >
+              Сбросить фильтры
+            </Button>
+          </div>
+        )}
+      </Section>
+    </PageContent>
   );
 };
 

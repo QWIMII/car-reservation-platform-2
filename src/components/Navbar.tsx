@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -13,10 +12,11 @@ const Navbar = () => {
         <div className="flex items-center justify-between h-20">
           <Link to="/" className="flex items-center gap-2">
             <img 
-              src="https://cdn.poehali.dev/files/30ce9e4d-e9cb-4b7f-89ed-fae60282d486.jpg" 
+              src="/images/logo.jpg" 
               alt="Meowest" 
               className="h-10 w-auto" 
             />
+            <span className="text-white text-xl font-bold hidden sm:block">MEOWEST</span>
           </Link>
 
           {/* Desktop Navigation */}
